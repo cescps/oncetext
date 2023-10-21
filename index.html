@@ -45,7 +45,7 @@
             background-color: #0056b3;
         }
 
-        #savedText {
+        #sharedText {
             display: none;
         }
     </style>
@@ -62,9 +62,9 @@
         <button onclick="saveText()">Save Text</button>
     </div>
 
-    <div class="container" id="savedText">
-        <h1>Saved Text</h1>
-        <div id="sharedText"></div>
+    <div class="container" id="sharedText">
+        <h1>Shared Text</h1>
+        <div id="displayText"></div>
     </div>
 
     <script>
@@ -86,41 +86,47 @@
 
             // Display the saved text container and hide the text editor container
             document.getElementById('textEditor').style.display = 'none';
-            document.getElementById('savedText').style.display = 'block';
+            document.getElementById('sharedText').style.display = 'block';
 
             // Display the saved text with a unique link
-            const sharedTextContainer = document.getElementById('sharedText');
-            sharedTextContainer.innerHTML = `
+            const displayTextContainer = document.getElementById('displayText');
+            displayTextContainer.innerHTML = `
                 <h2>${title}</h2>
                 <p>${content}</p>
-                <p>Share this link: <a href="#" onclick="viewText('${textId}')">${window.location.href}#${textId}</a></p>
+                <p>Share this link: ${window.location.href}#${textId}</p>
             `;
         }
 
-        function viewText(textId) {
-            // Retrieve text data from local storage using the text ID
-            const textData = JSON.parse(localStorage.getItem(textId));
+        function displayText() {
+            const textId = window.location.hash.substring(1);
 
-            // Display the shared text
-            const sharedTextContainer = document.getElementById('sharedText');
-            sharedTextContainer.innerHTML = `
-                <h2>${textData.title}</h2>
-                <p>${textData.content}</p>
-            `;
+            if (textId) {
+                // Retrieve text data from local storage using the text ID
+                const textData = JSON.parse(localStorage.getItem(textId));
 
-            // Delete the text after viewing
-            localStorage.removeItem(textId);
+                if (textData) {
+                    // Display the shared text
+                    const displayTextContainer = document.getElementById('displayText');
+                    displayTextContainer.innerHTML = `
+                        <h2>${textData.title}</h2>
+                        <p>${textData.content}</p>
+                    `;
 
-            // Hide the saved text container after a delay (e.g., 10 seconds)
-            setTimeout(() => {
-                document.getElementById('savedText').style.display = 'none';
-                document.getElementById('textEditor').style.display = 'block';
-            }, 10000);
+                    // Delete the text after viewing
+                    localStorage.removeItem(textId);
+                } else {
+                    // Handle the case where the text does not exist
+                    displayTextContainer.innerHTML = '<p>Text not found or already viewed.</p>';
+                }
+            }
         }
 
         function generateUniqueId() {
             return '_' + Math.random().toString(36).substr(2, 9);
         }
+
+        // Call displayText when the page loads to check for a hash in the URL
+        displayText();
     </script>
 </body>
 </html>
