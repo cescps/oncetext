@@ -93,12 +93,15 @@
             displayTextContainer.innerHTML = `
                 <h2>${title}</h2>
                 <p>${content}</p>
-                <p>Share this link: ${window.location.href}#${textId}</p>
+                <p>Share this link: ${window.location.href.replace(window.location.hash, '')}${textId}</p>
             `;
+
+            // Use HTML5 History API to manipulate the browser history
+            history.pushState(null, null, `#${textId}`);
         }
 
         function displayText() {
-            const textId = window.location.hash.substring(1);
+            const textId = window.location.pathname.substring(1);
 
             if (textId) {
                 // Retrieve text data from local storage using the text ID
@@ -127,6 +130,9 @@
 
         // Call displayText when the page loads to check for a hash in the URL
         displayText();
+
+        // Listen for popstate event to handle back/forward navigation
+        window.addEventListener('popstate', displayText);
     </script>
 </body>
 </html>
