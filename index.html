@@ -77,52 +77,58 @@
     <div class="container" id="sharedContainer">
         <h1>Shared Text</h1>
         <div id="sharedText"></div>
-    </div>
 
-    <script>
-        function createText() {
-            // Get form values
-            const title = document.getElementById('title').value;
-            const subheader = document.getElementById('subheader').value;
-            const content = document.getElementById('content').value;
+        <script>
+            function createText() {
+                const title = document.getElementById('title').value;
+                const subheader = document.getElementById('subheader').value;
+                const content = document.getElementById('content').value;
 
-            // Generate a unique identifier
-            const textId = generateUniqueId();
+                const textId = generateUniqueId();
 
-            // Create an object to store text data
-            const textData = {
-                title: title,
-                subheader: subheader,
-                content: content,
-                viewed: false
-            };
+                const textData = {
+                    title: title,
+                    subheader: subheader,
+                    content: content,
+                    viewed: false
+                };
 
-            // Store text data in localStorage with the unique identifier as the key
-            localStorage.setItem(textId, JSON.stringify(textData));
+                localStorage.setItem(textId, JSON.stringify(textData));
 
-            // Display the shared text container and hide the form container
-            document.getElementById('createForm').style.display = 'none';
-            document.getElementById('sharedContainer').style.display = 'block';
+                document.getElementById('createForm').style.display = 'none';
+                document.getElementById('sharedContainer').style.display = 'block';
 
-            // Display the shared text with a unique link
-            const sharedTextContainer = document.getElementById('sharedText');
-            sharedTextContainer.innerHTML = `
-                <h2>${textData.title}</h2>
-                <h3>${textData.subheader}</h3>
-                <p>${textData.content}</p>
-                <p>Share this link: <a href="${window.location.href}?id=${textId}" target="_blank">${window.location.href}?id=${textId}</a></p>
-            `;
+                document.getElementById('sharedText').innerHTML = `
+                    <h2>${title}</h2>
+                    <h3>${subheader}</h3>
+                    <p>${content}</p>
+                    <p>Share this link: <a href="#" onclick="viewText('${textId}')">${window.location.href}#view/${textId}</a></p>
+                `;
+            }
 
-            // Mark the text as viewed after a delay (e.g., 10 seconds)
-            setTimeout(function() {
+            function viewText(textId) {
+                const textData = JSON.parse(localStorage.getItem(textId));
+
+                const sharedTextContainer = document.getElementById('sharedText');
+                sharedTextContainer.innerHTML = `
+                    <h2>${textData.title}</h2>
+                    <h3>${textData.subheader}</h3>
+                    <p>${textData.content}</p>
+                `;
+
                 textData.viewed = true;
                 localStorage.setItem(textId, JSON.stringify(textData));
-            }, 10000); // Adjust the time delay as needed
-        }
 
-        function generateUniqueId() {
-            return '_' + Math.random().toString(36).substr(2, 9);
-        }
-    </script>
+                setTimeout(() => {
+                    document.getElementById('sharedContainer').style.display = 'none';
+                    document.getElementById('createForm').style.display = 'block';
+                }, 10000);
+            }
+
+            function generateUniqueId() {
+                return '_' + Math.random().toString(36).substr(2, 9);
+            }
+        </script>
+    </div>
 </body>
 </html>
