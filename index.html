@@ -104,11 +104,13 @@
             document.getElementById('createForm').style.display = 'none';
             document.getElementById('sharedContainer').style.display = 'block';
 
-            // Display the shared text
-            document.getElementById('sharedText').innerHTML = `
+            // Display the shared text with a unique link
+            const sharedTextContainer = document.getElementById('sharedText');
+            sharedTextContainer.innerHTML = `
                 <h2>${textData.title}</h2>
                 <h3>${textData.subheader}</h3>
                 <p>${textData.content}</p>
+                <p>Share this link: <a href="${window.location.href}?id=${textId}" target="_blank">${window.location.href}?id=${textId}</a></p>
             `;
 
             // Mark the text as viewed after a delay (e.g., 10 seconds)
