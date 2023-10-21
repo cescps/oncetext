@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One-Time Text</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+        }
+
+        input,
+        textarea {
+            margin-bottom: 15px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #sharedContainer {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="createForm">
+        <h1>Create a One-Time Text</h1>
+        <form>
+            <label for="title">Title:</label>
+            <input type="text" id="title" required>
+            
+            <label for="subheader">Subheader:</label>
+            <input type="text" id="subheader" required>
+            
+            <label for="content">Text:</label>
+            <textarea id="content" required></textarea>
+            
+            <button type="button" onclick="createText()">Create Text</button>
+        </form>
+    </div>
+
+    <div class="container" id="sharedContainer">
+        <h1>Shared Text</h1>
+        <div id="sharedText"></div>
+    </div>
+
+    <script>
+        function createText() {
+            // Get form values
+            const title = document.getElementById('title').value;
+            const subheader = document.getElementById('subheader').value;
+            const content = document.getElementById('content').value;
+
+            // Generate a unique identifier
+            const textId = generateUniqueId();
+
+            // Create an object to store text data
+            const textData = {
+                title: title,
+                subheader: subheader,
+                content: content,
+                viewed: false
+            };
+
+            // Store text data in localStorage with the unique identifier as the key
+            localStorage.setItem(textId, JSON.stringify(textData));
+
+            // Display the shared text container and hide the form container
+            document.getElementById('createForm').style.display = 'none';
+            document.getElementById('sharedContainer').style.display = 'block';
+
+            // Display the shared text
+            document.getElementById('sharedText').innerHTML = `
+                <h2>${textData.title}</h2>
+                <h3>${textData.subheader}</h3>
+                <p>${textData.content}</p>
+            `;
+
+            // Mark the text as viewed after a delay (e.g., 10 seconds)
+            setTimeout(function() {
+                textData.viewed = true;
+                localStorage.setItem(textId, JSON.stringify(textData));
+            }, 10000); // Adjust the time delay as needed
+        }
+
+        function generateUniqueId() {
+            return '_' + Math.random().toString(36).substr(2, 9);
+        }
+    </script>
+</body>
+</html>
