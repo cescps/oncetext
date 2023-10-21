@@ -74,61 +74,63 @@
         </form>
     </div>
 
-    <div class="container" id="sharedContainer">
-        <h1>Shared Text</h1>
-        <div id="sharedText"></div>
+<div class="container" id="sharedContainer">
+    <h1>Shared Text</h1>
+    <div id="sharedText"></div>
+    <button onclick="viewText()">View Text</button>
+</div>
 
-        <script>
-            function createText() {
-                const title = document.getElementById('title').value;
-                const subheader = document.getElementById('subheader').value;
-                const content = document.getElementById('content').value;
+<script>
+    function createText() {
+        const title = document.getElementById('title').value;
+        const subheader = document.getElementById('subheader').value;
+        const content = document.getElementById('content').value;
 
-                const textId = generateUniqueId();
+        const textId = generateUniqueId();
 
-                const textData = {
-                    title: title,
-                    subheader: subheader,
-                    content: content,
-                    viewed: false
-                };
+        const textData = {
+            title: title,
+            subheader: subheader,
+            content: content,
+            viewed: false
+        };
 
-                localStorage.setItem(textId, JSON.stringify(textData));
+        localStorage.setItem(textId, JSON.stringify(textData));
 
-                document.getElementById('createForm').style.display = 'none';
-                document.getElementById('sharedContainer').style.display = 'block';
+        document.getElementById('createForm').style.display = 'none';
+        document.getElementById('sharedContainer').style.display = 'block';
 
-                document.getElementById('sharedText').innerHTML = `
-                    <h2>${title}</h2>
-                    <h3>${subheader}</h3>
-                    <p>${content}</p>
-                    <p>Share this link: <a href="#" onclick="viewText('${textId}')">${window.location.href}#view/${textId}</a></p>
-                `;
-            }
+        document.getElementById('sharedText').innerHTML = `
+            <h2>${title}</h2>
+            <h3>${subheader}</h3>
+            <p>${content}</p>
+            <p>Share this link: <button onclick="viewText('${textId}')">View Text</button></p>
+        `;
+    }
 
-            function viewText(textId) {
-                const textData = JSON.parse(localStorage.getItem(textId));
+    function viewText(textId) {
+        const textData = JSON.parse(localStorage.getItem(textId));
 
-                const sharedTextContainer = document.getElementById('sharedText');
-                sharedTextContainer.innerHTML = `
-                    <h2>${textData.title}</h2>
-                    <h3>${textData.subheader}</h3>
-                    <p>${textData.content}</p>
-                `;
+        const sharedTextContainer = document.getElementById('sharedText');
+        sharedTextContainer.innerHTML = `
+            <h2>${textData.title}</h2>
+            <h3>${textData.subheader}</h3>
+            <p>${textData.content}</p>
+        `;
 
-                textData.viewed = true;
-                localStorage.setItem(textId, JSON.stringify(textData));
+        textData.viewed = true;
+        localStorage.setItem(textId, JSON.stringify(textData));
 
-                setTimeout(() => {
-                    document.getElementById('sharedContainer').style.display = 'none';
-                    document.getElementById('createForm').style.display = 'block';
-                }, 10000);
-            }
+        setTimeout(() => {
+            document.getElementById('sharedContainer').style.display = 'none';
+            document.getElementById('createForm').style.display = 'block';
+        }, 10000);
+    }
 
-            function generateUniqueId() {
-                return '_' + Math.random().toString(36).substr(2, 9);
-            }
-        </script>
+    function generateUniqueId() {
+        return '_' + Math.random().toString(36).substr(2, 9);
+    }
+</script>
     </div>
 </body>
 </html>
