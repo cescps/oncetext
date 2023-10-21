@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One-Time Text</title>
+    <title>Minimalist Text Editor</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -21,21 +21,14 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            margin-bottom: 5px;
-        }
-
-        input,
         textarea {
+            width: 100%;
+            height: 150px;
             margin-bottom: 15px;
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            resize: none;
         }
 
         button {
@@ -52,85 +45,82 @@
             background-color: #0056b3;
         }
 
-        #sharedContainer {
+        #savedText {
             display: none;
         }
     </style>
 </head>
 <body>
-    <div class="container" id="createForm">
-        <h1>Create a One-Time Text</h1>
-        <form>
-            <label for="title">Title:</label>
-            <input type="text" id="title" required>
-            
-            <label for="subheader">Subheader:</label>
-            <input type="text" id="subheader" required>
-            
-            <label for="content">Text:</label>
-            <textarea id="content" required></textarea>
-            
-            <button type="button" onclick="createText()">Create Text</button>
-        </form>
+    <div class="container" id="textEditor">
+        <h1>Minimalist Text Editor</h1>
+        <label for="textTitle">Title:</label>
+        <input type="text" id="textTitle" placeholder="Enter title">
+
+        <label for="textContent">Text:</label>
+        <textarea id="textContent" placeholder="Enter your text"></textarea>
+
+        <button onclick="saveText()">Save Text</button>
     </div>
 
-<div class="container" id="sharedContainer">
-    <h1>Shared Text</h1>
-    <div id="sharedText"></div>
-    <button onclick="viewText()">View Text</button>
-</div>
-
-<script>
-    function createText() {
-        const title = document.getElementById('title').value;
-        const subheader = document.getElementById('subheader').value;
-        const content = document.getElementById('content').value;
-
-        const textId = generateUniqueId();
-
-        const textData = {
-            title: title,
-            subheader: subheader,
-            content: content,
-            viewed: false
-        };
-
-        localStorage.setItem(textId, JSON.stringify(textData));
-
-        document.getElementById('createForm').style.display = 'none';
-        document.getElementById('sharedContainer').style.display = 'block';
-
-        document.getElementById('sharedText').innerHTML = `
-            <h2>${title}</h2>
-            <h3>${subheader}</h3>
-            <p>${content}</p>
-            <p>Share this link: <button onclick="viewText('${textId}')">View Text</button></p>
-        `;
-    }
-
-    function viewText(textId) {
-        const textData = JSON.parse(localStorage.getItem(textId));
-
-        const sharedTextContainer = document.getElementById('sharedText');
-        sharedTextContainer.innerHTML = `
-            <h2>${textData.title}</h2>
-            <h3>${textData.subheader}</h3>
-            <p>${textData.content}</p>
-        `;
-
-        textData.viewed = true;
-        localStorage.setItem(textId, JSON.stringify(textData));
-
-        setTimeout(() => {
-            document.getElementById('sharedContainer').style.display = 'none';
-            document.getElementById('createForm').style.display = 'block';
-        }, 10000);
-    }
-
-    function generateUniqueId() {
-        return '_' + Math.random().toString(36).substr(2, 9);
-    }
-</script>
+    <div class="container" id="savedText">
+        <h1>Saved Text</h1>
+        <div id="sharedText"></div>
     </div>
+
+    <script>
+        function saveText() {
+            const title = document.getElementById('textTitle').value;
+            const content = document.getElementById('textContent').value;
+
+            // Generate a unique identifier
+            const textId = generateUniqueId();
+
+            // Create an object to store text data
+            const textData = {
+                title: title,
+                content: content
+            };
+
+            // Store text data in local storage with the unique identifier as the key
+            localStorage.setItem(textId, JSON.stringify(textData));
+
+            // Display the saved text container and hide the text editor container
+            document.getElementById('textEditor').style.display = 'none';
+            document.getElementById('savedText').style.display = 'block';
+
+            // Display the saved text with a unique link
+            const sharedTextContainer = document.getElementById('sharedText');
+            sharedTextContainer.innerHTML = `
+                <h2>${title}</h2>
+                <p>${content}</p>
+                <p>Share this link: <a href="#" onclick="viewText('${textId}')">${window.location.href}#${textId}</a></p>
+            `;
+        }
+
+        function viewText(textId) {
+            // Retrieve text data from local storage using the text ID
+            const textData = JSON.parse(localStorage.getItem(textId));
+
+            // Display the shared text
+            const sharedTextContainer = document.getElementById('sharedText');
+            sharedTextContainer.innerHTML = `
+                <h2>${textData.title}</h2>
+                <p>${textData.content}</p>
+            `;
+
+            // Delete the text after viewing
+            localStorage.removeItem(textId);
+
+            // Hide the saved text container after a delay (e.g., 10 seconds)
+            setTimeout(() => {
+                document.getElementById('savedText').style.display = 'none';
+                document.getElementById('textEditor').style.display = 'block';
+            }, 10000);
+        }
+
+        function generateUniqueId() {
+            return '_' + Math.random().toString(36).substr(2, 9);
+        }
+    </script>
 </body>
 </html>
